@@ -1,0 +1,18 @@
+{# templates/accessory/edit.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier {{ accessory.nom }}{% endblock %}
+
+{% block body %}
+    <h1>Modifier l'accessoire {{ accessory.nom }}</h1>
+
+    {{ form_start(form) }}
+        {{ form_row(form.nom) }}
+        {{ form_row(form.categorie) }}
+        {{ form_row(form.description) }}
+        {{ form_row(form.prix) }}
+        {{ form_row(form.stock) }}
+        {{ form_row(form.image) }}
+        <button class="btn">Mettre à jour</button>
+    {{ form_end(form) }}
+{% endblock %}

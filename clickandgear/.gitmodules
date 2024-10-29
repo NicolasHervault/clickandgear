@@ -1,0 +1,3 @@
+[submodule "sous-dossier"]
+	path = sous-dossier
+	url = https://github.com/NicolasHervault/clickandgear.git

@@ -1,0 +1,59 @@
+{# templates/accessory/home.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des Accessoires{% endblock %}
+
+{% block body %}
+
+<div class="container">
+    <h1>Accessoires PC</h1>
+
+    <!-- Formulaire de filtre -->
+    <form method="get" action="{{ path('accessory_list') }}">
+        <div class="row">
+            <div class="col-md-4">
+                <label for="categorie">Catégorie</label>
+                <select name="categorie" id="categorie" class="form-control">
+                    <option value="">Toutes les catégories</option>
+                    <option value="Souris" {% if app.request.get('categorie') == 'Souris' %}selected{% endif %}>Souris</option>
+                    <option value="Clavier" {% if app.request.get('categorie') == 'Clavier' %}selected{% endif %}>Clavier</option>
+                    <option value="Casque" {% if app.request.get('categorie') == 'Casque' %}selected{% endif %}>Casque</option>
+                    <option value="Tapis de souris" {% if app.request.get('categorie') == 'Tapis de souris' %}selected{% endif %}>Tapis de souris</option>
+                </select>
+            </div>
+
+            <div class="col-md-4">
+                <label for="price_min">Prix minimum</label>
+                <input type="number" name="price_min" id="price_min" class="form-control" value="{{ app.request.get('price_min') }}">
+            </div>
+
+            <div class="col-md-4">
+                <label for="price_max">Prix maximum</label>
+                <input type="number" name="price_max" id="price_max" class="form-control" value="{{ app.request.get('price_max') }}">
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-md-12">
+                <button type="submit" class="btn btn-primary">Filtrer</button>
+            </div>
+        </div>
+    </form>
+
+    <ul>
+        <div class="row">
+            {% for accessory in accessories %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <img src="{{ asset('images/' ~ accessory.image) }}" class="card-img-top" alt="{{ accessory.nom }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ accessory.nom }}</h5>
+                            <p class="card-text"><strong>Catégorie:</strong> {{ accessory.categorie }}</p>
+                            <p class="card-text"><strong>Prix:</strong> {{ accessory.prix }} €</p>
+                            <button class="btn btn-primary add-to-cart-btn" data-id="{{ accessory.id }}">Ajouter au panier</button>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+{% endblock %}

@@ -1,0 +1,122 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Votre Panier</h1>
+    {% if cartItems is not empty %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Produit</th>
+                    <th>Quantité</th>
+                    <th>Prix Unitaire</th>
+                    <th>Total</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in cartItems %}
+                    <tr id="cart-item-{{ item.id }}">
+                        <td>{{ item.accessory.nom }}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-secondary decrease-quantity" data-id="{{ item.id }}">-</button>
+                            <span class="quantity">{{ item.quantity }}</span>
+                            <button class="btn btn-sm btn-outline-secondary increase-quantity" data-id="{{ item.id }}">+</button>
+                        </td>
+                        <td>{{ item.accessory.prix }} €</td>
+                        <td class="total">{{ item.accessory.prix * item.quantity }} €</td>
+                        <td>
+                            <form method="post" action="{{ path('cart_remove', { id: item.id }) }}" style="display:inline;">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ item.id) }}">
+                                <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>Votre panier est vide.</p>
+    {% endif %}
+{% endblock %}
+
+{% block javascripts %}
+<script>
+// Fonction pour mettre à jour le compteur du panier dans le header
+function updateCartCount() {
+    fetch('/cart/count', {
+        method: "GET",
+        headers: {
+            "X-Requested-With": "XMLHttpRequest"
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.cartCount !== undefined) {
+            document.querySelector("#cart-count").textContent = data.cartCount;
+        }
+    })
+    .catch(error => console.error("Erreur:", error));
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    // Gestion de l'augmentation de la quantité
+    document.querySelectorAll(".increase-quantity").forEach(button => {
+        button.addEventListener("click", function() {
+            const itemId = this.getAttribute("data-id");
+
+            fetch(`/cart/increase/${itemId}`, {
+                method: "POST",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    "Content-Type": "application/json",
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.quantity !== undefined) {
+                    document.querySelector(`#cart-item-${itemId} .quantity`).textContent = data.quantity;
+                    document.querySelector(`#cart-item-${itemId} .total`).textContent = `${(data.quantity * data.price).toFixed(2)} €`;
+                    updateTotalGlobal();
+                    updateCartCount(); // Met à jour le compteur du panier dans le header
+                }
+            })
+            .catch(error => console.error("Erreur:", error));
+        });
+    });
+
+    // Gestion de la diminution de la quantité
+    document.querySelectorAll(".decrease-quantity").forEach(button => {
+        button.addEventListener("click", function() {
+            const itemId = this.getAttribute("data-id");
+
+            fetch(`/cart/decrease/${itemId}`, {
+                method: "POST",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    "Content-Type": "application/json",
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.quantity !== undefined) {
+                    if (data.removed) {
+                        document.querySelector(`#cart-item-${itemId}`).remove();
+                    } else {
+                        document.querySelector(`#cart-item-${itemId} .quantity`).textContent = data.quantity;
+                        document.querySelector(`#cart-item-${itemId} .total`).textContent = `${(data.quantity * data.price).toFixed(2)} €`;
+                    }
+                    updateTotalGlobal();
+                    updateCartCount(); // Met à jour le compteur du panier dans le header
+                }
+            })
+            .catch(error => console.error("Erreur:", error));
+        });
+    });
+
+    // Calcul initial du total global et du compteur au chargement de la page
+    updateTotalGlobal();
+    updateCartCount(); // Met à jour le compteur du panier dans le header au chargement de la page
+});
+
+</script>
+{% endblock %}
