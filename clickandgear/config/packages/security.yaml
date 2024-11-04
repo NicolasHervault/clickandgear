@@ -23,13 +23,4 @@ security:
                 csrf_token_id: authenticate
                 default_target_path: /home
             logout:
-                path: l/ogout
-                target: /login
-
-    access_control:
-        - { path: ^/inscription/, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/login/, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/logout, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/home, roles: ROLE_USER }
-        - { path: ^/accessory, roles: ROLE_USER }
-        - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
+                path: /logout

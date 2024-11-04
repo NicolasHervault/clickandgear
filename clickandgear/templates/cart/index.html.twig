@@ -58,6 +58,15 @@ function updateCartCount() {
     .catch(error => console.error("Erreur:", error));
 }
 
+// Fonction pour mettre à jour le total global du panier
+function updateTotalGlobal() {
+    let totalGlobal = 0;
+    document.querySelectorAll('.total').forEach(totalElement => {
+        totalGlobal += parseFloat(totalElement.textContent.replace(' €', ''));
+    });
+    document.querySelector('#total-global').textContent = `${totalGlobal.toFixed(2)} €`;
+}
+
 document.addEventListener("DOMContentLoaded", function() {
     // Gestion de l'augmentation de la quantité
     document.querySelectorAll(".increase-quantity").forEach(button => {

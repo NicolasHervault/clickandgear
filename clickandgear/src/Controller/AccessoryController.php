@@ -50,7 +50,7 @@ class AccessoryController extends AbstractController
             $entityManager->flush();
 
             // Rediriger vers la page des accessoires après ajout
-            return $this->redirectToRoute('accessory_home');
+            return $this->redirectToRoute('accessory_list');
         }
 
         // Rendre le template du formulaire
@@ -113,7 +113,7 @@ class AccessoryController extends AbstractController
             $entityManager->flush();
 
             // Rediriger vers la page de liste des accessoires
-            return $this->redirectToRoute('accessory_home');
+            return $this->redirectToRoute('accessory_list');
         }
 
         // Rendre la vue pour l'édition
@@ -134,8 +134,6 @@ class AccessoryController extends AbstractController
         }
 
         // Rediriger vers la liste après la suppression
-        return $this->redirectToRoute('accessory_home');
+        return $this->redirectToRoute('accessory_list');
     }
-    
-
 }

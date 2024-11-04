@@ -19,7 +19,6 @@
                         <i class="fas fa-shopping-cart"></i>
                          Panier <span id="cart-count" class="badge badge-pill badge-primary">{{ cart_count() }}</span>
                     </a>
-
                 </li>
             </ul>
         </div>
@@ -34,11 +33,12 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     {% block javascripts %}{% endblock %}
-  <script>
+<script>
 document.addEventListener("DOMContentLoaded", function() {
-    const cartCountElement = document.querySelector("#cart-count");
+    const buttons = document.querySelectorAll(".add-to-cart-btn");
+    const cartCountElement = document.getElementById("cart-count");
 
-    document.querySelectorAll(".add-to-cart-btn").forEach(button => {
+    buttons.forEach(button => {
         button.addEventListener("click", function() {
             const accessoryId = this.getAttribute("data-id");
 
@@ -61,10 +61,6 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     });
 });
-
 </script>
-
-
-
 </body>
 </html>
