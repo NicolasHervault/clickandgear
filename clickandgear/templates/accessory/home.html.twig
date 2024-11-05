@@ -7,47 +7,49 @@
     {{ parent() }}
     <style>
         body {
-            background-color: #001f3f;
-            overflow: hidden;
+            background: linear-gradient(135deg, #1f1c2c, #928dab);
+            overflow: auto;
             color: #ffffff;
+            position: relative;
+        }
+
+        body.dark-mode {
+            background: linear-gradient(135deg, #0d0d0d, #1a1a1a); /* Couleur de fond plus sombre */
+        }
+
+        body.light-mode {
+            background: linear-gradient(135deg, #e0e0e0, #f8f9fa);
         }
 
         .container {
             background-color: rgba(0, 0, 0, 0.7);
             padding: 20px;
             border-radius: 10px;
+            position: relative;
+            z-index: 1;
         }
 
-        .accessory-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-        }
-
-        .accessory-item {
+        .card {
             background-color: rgba(255, 255, 255, 0.1);
+            border: none;
             border-radius: 10px;
             overflow: hidden;
-            text-align: center;
-            padding: 20px;
+            transition: transform 0.2s;
         }
 
-        .accessory-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover; /* Pour recadrer automatiquement */
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-img-top {
+            height: 200px;
+            object-fit: cover;
             border-top-left-radius: 10px;
             border-top-right-radius: 10px;
         }
 
-        .accessory-item h5 {
+        .card-title, .card-text {
             color: #ffffff;
-            margin-bottom: 10px;
-        }
-
-        .accessory-item p {
-            color: #ffffff;
-            margin-bottom: 10px;
         }
 
         .btn-primary {
@@ -63,7 +65,7 @@
 
         .form-control {
             background-color: rgba(255, 255, 255, 0.1);
-            border: none;
+            border: 1px solid #ced4da;
             color: #ffffff;
         }
 
@@ -74,40 +76,109 @@
         .form-control:focus {
             background-color: rgba(255, 255, 255, 0.2);
             color: #ffffff;
+            border-color: #80bdff;
+            outline: 0;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
         }
 
-        .star {
+        .form-label {
+            color: #ffffff;
+        }
+
+        .form-control option {
+            background-color: #000000;
+            color: #ffffff;
+        }
+
+        .form-control option[value="Souris"] {
+            background-color: #000000;
+        }
+
+        .form-control option[value="Clavier"] {
+            background-color: #000000;
+        }
+
+        .form-control option[value="Casque"] {
+            background-color: #000000;
+        }
+
+        .form-control option[value="Tapis de souris"] {
+            background-color: #000000;
+        }
+
+        .waves {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .wave {
             position: absolute;
-            width: 2px;
-            height: 2px;
-            background: white;
-            border-radius: 50%;
-            animation: star-animation 5s linear infinite;
+            width: 200%;
+            height: 200%;
+            border-radius: 45%;
+            animation: animateWave 10s linear infinite;
         }
 
-        @keyframes star-animation {
+        .light-mode .wave {
+            background: rgba(255, 165, 0, 0.1); /* Couleur jaune orangé */
+        }
+
+        .dark-mode .wave {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .wave:nth-child(2) {
+            animation-duration: 15s;
+            animation-delay: -5s;
+        }
+
+        .wave:nth-child(3) {
+            animation-duration: 20s;
+            animation-delay: -10s;
+        }
+
+        @keyframes animateWave {
             0% {
-                transform: translateY(0) translateX(0);
-                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.1);
             }
             100% {
-                transform: translateY(100vh) translateX(100vw);
-                opacity: 0;
+                transform: translate(-50%, -50%) scale(1);
             }
+        }
+
+        .content {
+            position: relative;
+            z-index: 1;
+            padding: 20px;
         }
     </style>
 {% endblock %}
 
 {% block body %}
 
-<div class="container">
-    <h1>Accessoires PC</h1>
+<div class="waves">
+    <div class="wave"></div>
+    <div class="wave"></div>
+    <div class="wave"></div>
+</div>
+
+<div class="container mt-5 content">
+    <h1 class="text-center mb-4">Accessoires PC</h1>
 
     <!-- Formulaire de filtre -->
-    <form method="get" action="{{ path('accessory_list') }}">
+    <form method="get" action="{{ path('accessory_list') }}" class="mb-4">
         <div class="row">
-            <div class="col-md-4">
-                <label for="categorie">Catégorie</label>
+            <div class="col-md-4 mb-3">
+                <label for="categorie" class="form-label">Catégorie</label>
                 <select name="categorie" id="categorie" class="form-control">
                     <option value="">Toutes les catégories</option>
                     <option value="Souris" {% if app.request.get('categorie') == 'Souris' %}selected{% endif %}>Souris</option>
@@ -117,33 +188,38 @@
                 </select>
             </div>
 
-            <div class="col-md-4">
-                <label for="price_min">Prix minimum</label>
+            <div class="col-md-4 mb-3">
+                <label for="price_min" class="form-label">Prix minimum</label>
                 <input type="number" name="price_min" id="price_min" class="form-control" value="{{ app.request.get('price_min') }}">
             </div>
 
-            <div class="col-md-4">
-                <label for="price_max">Prix maximum</label>
+            <div class="col-md-4 mb-3">
+                <label for="price_max" class="form-label">Prix maximum</label>
                 <input type="number" name="price_max" id="price_max" class="form-control" value="{{ app.request.get('price_max') }}">
             </div>
         </div>
 
-        <div class="row mt-3">
-            <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-12 text-center">
                 <button type="submit" class="btn btn-primary">Filtrer</button>
             </div>
         </div>
     </form>
 
-    <div class="accessory-grid">
+    <div class="row">
         {% for accessory in accessories %}
-            <div class="accessory-item">
-                <img src="{{ asset('images/' ~ accessory.image) }}" alt="{{ accessory.nom }}">
-                <h5>{{ accessory.nom }}</h5>
-                <p><strong>Catégorie:</strong> {{ accessory.categorie }}</p>
-                <p><strong>Prix:</strong> {{ accessory.prix }} €</p>
-                <button class="btn btn-primary add-to-cart-btn" data-id="{{ accessory.id }}">Ajouter au panier</button>
-                <a href="{{ path('accessory_edit', { id: accessory.id }) }}" class="btn btn-secondary">Modifier</a>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <img src="{{ asset('uploads/images/' ~ accessory.image) }}" class="card-img-top" alt="{{ accessory.nom }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ accessory.nom }}</h5>
+                        <p class="card-text"><strong>Catégorie:</strong> {{ accessory.categorie }}</p>
+                        <p class="card-text"><strong>Prix:</strong> {{ accessory.prix }} €</p>
+                        <p class="card-text">{{ accessory.description }}</p>
+                        <button class="btn btn-primary add-to-cart-btn" data-id="{{ accessory.id }}">Ajouter au panier</button>
+                        <a href="{{ path('accessory_edit', { id: accessory.id }) }}" class="btn btn-secondary">Modifier</a>
+                    </div>
+                </div>
             </div>
         {% endfor %}
     </div>
@@ -152,19 +228,4 @@
 
 {% block javascripts %}
     {{ parent() }}
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const starCount = 100;
-            const body = document.querySelector('body');
-
-            for (let i = 0; i < starCount; i++) {
-                const star = document.createElement('div');
-                star.classList.add('star');
-                star.style.top = `${Math.random() * 100}vh`;
-                star.style.left = `${Math.random() * 100}vw`;
-                star.style.animationDuration = `${Math.random() * 5 + 5}s`;
-                body.appendChild(star);
-            }
-        });
-    </script>
 {% endblock %}
